@@ -30,3 +30,8 @@ void ASnakeElementBase::SetFirstElementType_Implementation()
 
 }
 
+void ASnakeElementBase::Interact(AActor* Interactor)
+{
+
+}
+
