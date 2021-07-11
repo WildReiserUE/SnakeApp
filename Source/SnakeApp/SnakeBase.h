@@ -39,10 +39,16 @@ public:
 		int ElementsStart;
 
 	UPROPERTY()
+		bool InputAllow;
+
+	UPROPERTY()
 		TArray<ASnakeElementBase*> SnakeElements;
 
 	UPROPERTY()
 		EMovementDirection LastMoveDirection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int SnakeTotallLenght;
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,4 +66,9 @@ public:
 
 	UFUNCTION()
 	void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
+
+	UFUNCTION(BlueprintNativeEvent)
+		///int GetScore();
+	void GetScore();
+	void GetScore_Implementation();
 };

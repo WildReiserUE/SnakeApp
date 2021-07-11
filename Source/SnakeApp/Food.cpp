@@ -29,7 +29,7 @@ void AFood::Tick(float DeltaTime)
 
 void AFood::Interact(AActor* Interactor, bool bIsHead)
 {
-	UE_LOG(LogTemp, Display, TEXT("FoodInteract"));
+	//UE_LOG(LogTemp, Display, TEXT("FoodInteract"));
 	if (bIsHead)
 	{
 		auto  Snake = Cast<ASnakeBase>(Interactor);

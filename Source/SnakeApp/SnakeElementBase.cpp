@@ -54,7 +54,7 @@ void ASnakeElementBase::HandleBeginOverlap(
 	bool bFromSweep,
 	const FHitResult &SweepResult)
 {
-	UE_LOG(LogTemp, Display, TEXT("HandleBeginOverlap"));
+	//UE_LOG(LogTemp, Display, TEXT("HandleBeginOverlap"));
 	if ((SnakeOwner))
 	{
 		SnakeOwner->SnakeElementOverlap(this, OtherActor);
