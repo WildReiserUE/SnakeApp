@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interactable.h"
 #include "SnakeBase.generated.h"
 
 class ASnakeElementBase;
@@ -35,6 +34,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 		float MovementSpeed;
+
+	UPROPERTY(EditDefaultsOnly)
+		int ElementsStart;
 
 	UPROPERTY()
 		TArray<ASnakeElementBase*> SnakeElements;

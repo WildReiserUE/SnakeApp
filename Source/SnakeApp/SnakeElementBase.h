@@ -37,8 +37,6 @@ public:
 	void SetFirstElementType();
 	void SetFirstElementType_Implementation();
 
-	virtual void Interact(AActor* Interactor, bool bIsHead) override;
-
 	UFUNCTION()
 		void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 			AActor* OtherActor,
@@ -47,6 +45,8 @@ public:
 			bool bFromSweep,
 			const FHitResult &SweepResult);
 
-	//UFUNCTION()
-	//void ToggleCollision();
+	UFUNCTION()
+	void ToggleCollision();
+
+	virtual void Interact(AActor* Interactor, bool bIsHead) override;
 };

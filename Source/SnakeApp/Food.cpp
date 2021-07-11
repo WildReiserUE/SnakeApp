@@ -3,6 +3,7 @@
 
 #include "Food.h"
 #include "SnakeBase.h"
+#include "Components/PrimitiveComponent.h"
 
 // Sets default values
 AFood::AFood()
@@ -28,12 +29,14 @@ void AFood::Tick(float DeltaTime)
 
 void AFood::Interact(AActor* Interactor, bool bIsHead)
 {
+	UE_LOG(LogTemp, Display, TEXT("FoodInteract"));
 	if (bIsHead)
 	{
 		auto  Snake = Cast<ASnakeBase>(Interactor);
 		if (IsValid(Snake))
 		{
 			Snake->AddSnakeElement();
+			Destroy();
 		}
 	}
 }

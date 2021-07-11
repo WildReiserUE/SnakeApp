@@ -20,7 +20,7 @@ class SNAKEAPP_API IInteractable
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+	// Добавьте в этот класс интерфейсные функции. Это класс, который будет унаследован для реализации этого интерфейса.
 public:
 	virtual void Interact(AActor* Interactor, bool bIsHead);
 };
