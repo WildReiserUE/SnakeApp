@@ -3,11 +3,14 @@ DerivedDataCache
 Intermediate
 Saved
 .vscode
+.codelite
 .vs
 .idea
 .kdev4
 *.code-workspace
 Makefile
+*.txt
+*.workspace
 *.kdev4
 *.pro
 *.pri
