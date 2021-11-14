@@ -5,6 +5,13 @@ Saved
 .vscode
 .vs
 .idea
+.kdev4
+*.code-workspace
+Makefile
+*.kdev4
+*.pro
+*.pri
+*.ignore
 *.VC.db
 *.opensdf
 *.opendb
