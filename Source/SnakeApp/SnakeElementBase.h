@@ -14,23 +14,20 @@ UCLASS()
 class SNAKEAPP_API ASnakeElementBase : public AActor, public IInteractable
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
+
+public:
 	ASnakeElementBase();
 
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly)
-	UStaticMeshComponent* MeshComponent;
+	UStaticMeshComponent* MeshComponent = nullptr;
 
 	UPROPERTY()
-	ASnakeBase* SnakeOwner;
+	ASnakeBase* SnakeOwner = nullptr;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintNativeEvent)
@@ -38,12 +35,12 @@ public:
 	void SetFirstElementType_Implementation();
 
 	UFUNCTION()
-		void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-			AActor* OtherActor,
-			UPrimitiveComponent* OtherComp,
-			int32 OtherBodyIndex,
-			bool bFromSweep,
-			const FHitResult &SweepResult);
+	void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+							AActor* OtherActor,
+							UPrimitiveComponent* OtherComp,
+							int32 OtherBodyIndex,
+							bool bFromSweep,
+							const FHitResult &SweepResult);
 
 	UFUNCTION()
 	void ToggleCollision();

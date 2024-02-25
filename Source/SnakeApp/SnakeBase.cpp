@@ -4,27 +4,28 @@
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
 
-// Sets default values
 ASnakeBase::ASnakeBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	ElementSize = 80.f;
-	MovementSpeed = 10.f;
+	MovementSpeed = 0.5f;
 	ElementsStart = 3;
 	LastMoveDirection = EMovementDirection::DOWN;
-	SnakeTotallLenght = 0;
 }
 
-// Called when the game starts or when spawned
+int ASnakeBase::GetSnakeLenght()
+{
+	return SnakeElements.Num();
+}
+
 void ASnakeBase::BeginPlay()
 {
 	Super::BeginPlay();	
 	SetActorTickInterval(MovementSpeed);
-	AddSnakeElement(ElementsStart);
+	BlockToAdd = ElementsStart;
+	AddElement(BlockToAdd);
 }
 
-// Called every frame
 void ASnakeBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -32,10 +33,14 @@ void ASnakeBase::Tick(float DeltaTime)
 	Move();
 }
 
-void ASnakeBase::AddSnakeElement(int ElementsNum)
+void ASnakeBase::AddElement(int Elements)
 {
-	int32 ElemIndex = 0;
-	for (int i = 0; i < ElementsNum; ++i)
+	if(!QueueExist())
+	{
+		SnakeTimerDelegate.BindUFunction(this, "AddElement", Elements);
+		GetWorld()->GetTimerManager().SetTimer(SnakeTimerHandle, SnakeTimerDelegate,MovementSpeed,  true);
+	}
+	else
 	{
 		FVector NewLocation(SnakeElements.Num() * ElementSize, 0, 30);
 		FTransform NewTransform(NewLocation);
@@ -44,18 +49,13 @@ void ASnakeBase::AddSnakeElement(int ElementsNum)
 		ElemIndex = SnakeElements.Add(NewSnakeElement);
 
 		NewSnakeElement->MeshComponent->SetVisibility(false);
-	
 		if (ElemIndex == 0)
 		{
 			NewSnakeElement->SetFirstElementType();
 		}
-
-		//UE_LOG(LogTemp, Display, TEXT("AddSnakeElement %d"), ElemIndex);
 	}
 
-	SnakeTotallLenght = ElemIndex - ElementsStart + 1;
 	GetScore();
-
 }
 
 void ASnakeBase::Move()
@@ -100,15 +100,20 @@ void ASnakeBase::Move()
 
 	}
 	SnakeElements[0]->AddActorWorldOffset(MovementVector);
-	SnakeElements[0]->ToggleCollision();	
+	SnakeElements[0]->ToggleCollision();
+}
+
+bool ASnakeBase::QueueExist()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Snake.QUEUE  === %i"), BlockToAdd);
+	return BlockToAdd > 0;
 }
 
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other)
 {
 	//UE_LOG(LogTemp, Display, TEXT("SnakeElementOverlap"));
-	if ((OverlappedElement))
+	if (OverlappedElement)
 	{
-		int32 ElemIndex;
 		SnakeElements.Find(OverlappedElement, ElemIndex);
 		bool bIsFirst = ElemIndex == 0;
 		IInteractable* InteractableInterface = Cast<IInteractable>(Other);
@@ -119,13 +124,6 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActo
 	}
 }
 
-//void ASnakeBase::GetScore()
-//{
-//	//return SnakeTotallLenght;
-//}
-
 void ASnakeBase::GetScore_Implementation()
 {
-	//UE_LOG(LogTemp, Display, TEXT("GetScore_Implementation"));
-	//return int SnakeTotallLenght;
 }

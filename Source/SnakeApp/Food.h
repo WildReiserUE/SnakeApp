@@ -24,6 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn))
+	int Bonuses = 0;
+
 	virtual void Interact(AActor* Interactor, bool bIsHead) override;
 
 };

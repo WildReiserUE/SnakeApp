@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SnakeBase.generated.h"
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFoundFood, int, Food);
 
 class ASnakeElementBase;
 
@@ -21,54 +22,56 @@ UCLASS()
 class SNAKEAPP_API ASnakeBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
+
+public:
 	ASnakeBase();
 
-	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<ASnakeElementBase> SnakeElementClass;
+	FOnFoundFood FoundFood;
 
 	UPROPERTY(EditDefaultsOnly)
-		float ElementSize;
+	TSubclassOf<ASnakeElementBase> SnakeElementClass;
 
 	UPROPERTY(EditDefaultsOnly)
-		float MovementSpeed;
+	float ElementSize = 50.f;
 
 	UPROPERTY(EditDefaultsOnly)
-		int ElementsStart;
+	float MovementSpeed = 1.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	int ElementsStart = 1;
 
 	UPROPERTY()
-		bool InputAllow;
+	bool InputAllow = true;
 
 	UPROPERTY()
-		TArray<ASnakeElementBase*> SnakeElements;
+	TArray<ASnakeElementBase*> SnakeElements;
 
 	UPROPERTY()
-		EMovementDirection LastMoveDirection;
+	EMovementDirection LastMoveDirection = EMovementDirection::UP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int SnakeTotallLenght;
+	UFUNCTION(BlueprintCallable)
+	int GetSnakeLenght();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
+public:
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	void AddSnakeElement(int ElementsNum = 1);
+	int32 ElemIndex = 0;
+	UFUNCTION()
+	void AddElement(int Elements);
 
-	UFUNCTION(BlueprintCallable)
 	void Move();
+	bool QueueExist();
+	int BlockToAdd = 0;
+	FTimerDelegate SnakeTimerDelegate;
+	FTimerHandle SnakeTimerHandle;
 
 	UFUNCTION()
 	void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
 
 	UFUNCTION(BlueprintNativeEvent)
-		///int GetScore();
 	void GetScore();
 	void GetScore_Implementation();
 };
