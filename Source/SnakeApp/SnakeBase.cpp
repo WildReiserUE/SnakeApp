@@ -20,10 +20,11 @@ int ASnakeBase::GetSnakeLenght()
 
 void ASnakeBase::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 	SetActorTickInterval(MovementSpeed);
 	BlockToAdd = ElementsStart;
-	AddElement(BlockToAdd);
+	MakeFirstSnake();
+	AddSKElement();
 }
 
 void ASnakeBase::Tick(float DeltaTime)
@@ -33,14 +34,42 @@ void ASnakeBase::Tick(float DeltaTime)
 	Move();
 }
 
-void ASnakeBase::AddElement(int Elements)
+void ASnakeBase::AddSKElement()
 {
-	if(!QueueExist())
+	if(QueueExist())
 	{
-		SnakeTimerDelegate.BindUFunction(this, "AddElement", Elements);
-		GetWorld()->GetTimerManager().SetTimer(SnakeTimerHandle, SnakeTimerDelegate,MovementSpeed,  true);
+		if(!GetWorld()->GetTimerManager().IsTimerActive(SnakeTimerHandle))
+		{
+			GetWorld()->GetTimerManager().SetTimer(SnakeTimerHandle, this, &ASnakeBase::AddSKElement, MovementSpeed, true, MovementSpeed);
+		}
+		else
+		{
+			FVector NewLocation(0);
+			if(SnakeElements.Num() > 0)
+				NewLocation = SnakeElements[SnakeElements.Num()-1]->GetActorLocation();
+			FTransform NewTransform(NewLocation);
+			ASnakeElementBase* NewSnakeElement = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
+			NewSnakeElement->SnakeOwner = this;
+			ElemIndex = SnakeElements.Add(NewSnakeElement);
+			NewSnakeElement->ToggleCollision();
+			BlockToAdd--;
+			ElementsStart++;
+			FoundFood.Broadcast(ElementsStart);
+			UE_LOG(LogTemp, Warning, TEXT("Snake.ELEMENTS === %i"), BlockToAdd);
+		}
 	}
 	else
+	{
+		if (GetWorld()->GetTimerManager().IsTimerActive(SnakeTimerHandle))
+			GetWorld()->GetTimerManager().ClearTimer(SnakeTimerHandle);
+	}
+
+	GetScore();
+}
+
+void ASnakeBase::MakeFirstSnake()
+{
+	for(int i = 0; i < ElementsStart; i++ )
 	{
 		FVector NewLocation(SnakeElements.Num() * ElementSize, 0, 30);
 		FTransform NewTransform(NewLocation);
@@ -48,14 +77,13 @@ void ASnakeBase::AddElement(int Elements)
 		NewSnakeElement->SnakeOwner = this;
 		ElemIndex = SnakeElements.Add(NewSnakeElement);
 
-		NewSnakeElement->MeshComponent->SetVisibility(false);
 		if (ElemIndex == 0)
 		{
 			NewSnakeElement->SetFirstElementType();
 		}
+		BlockToAdd--;
+		UE_LOG(LogTemp, Warning, TEXT("Snake.FIRST_ELEMENTS === %i"), BlockToAdd);
 	}
-
-	GetScore();
 }
 
 void ASnakeBase::Move()
@@ -79,28 +107,20 @@ void ASnakeBase::Move()
 		break;
 	}
 
-	if (!SnakeElements[0]->MeshComponent->GetVisibleFlag())
+	if(SnakeElements.Num() > 0)
 	{
-		SnakeElements[0]->MeshComponent->SetVisibility(true);
-	}
+		SnakeElements[0]->ToggleCollision();
 
-	SnakeElements[0]->ToggleCollision();
-
-	for (int i = SnakeElements.Num() - 1; i > 0; i--)
-	{
-		auto CurrentElement = SnakeElements[i];
-		auto PrevElement = SnakeElements[i - 1];
-		FVector PrevLocation = PrevElement->GetActorLocation();
-		CurrentElement->SetActorLocation(PrevLocation);
-
-		if (!CurrentElement->MeshComponent->GetVisibleFlag())
+		for (int i = SnakeElements.Num() - 1; i > 0; i--)
 		{
-			CurrentElement->MeshComponent->SetVisibility(true);
+			auto CurrentElement = SnakeElements[i];
+			auto PrevElement = SnakeElements[i - 1];
+			FVector PrevLocation = PrevElement->GetActorLocation();
+			CurrentElement->SetActorLocation(PrevLocation);
 		}
-
+		SnakeElements[0]->AddActorWorldOffset(MovementVector);
+		SnakeElements[0]->ToggleCollision();
 	}
-	SnakeElements[0]->AddActorWorldOffset(MovementVector);
-	SnakeElements[0]->ToggleCollision();
 }
 
 bool ASnakeBase::QueueExist()

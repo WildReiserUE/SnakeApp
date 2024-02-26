@@ -26,6 +26,7 @@ class SNAKEAPP_API ASnakeBase : public AActor
 public:
 	ASnakeBase();
 
+	UPROPERTY(BlueprintAssignable)
 	FOnFoundFood FoundFood;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -59,8 +60,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	int32 ElemIndex = 0;
+
 	UFUNCTION()
-	void AddElement(int Elements);
+	void AddSKElement();
+
+	void MakeFirstSnake();
 
 	void Move();
 	bool QueueExist();

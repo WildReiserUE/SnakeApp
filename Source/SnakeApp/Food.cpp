@@ -36,6 +36,7 @@ void AFood::Interact(AActor* Interactor, bool bIsHead)
 		if (IsValid(Snake))
 		{
 			Snake->BlockToAdd += Bonuses;
+			Snake->AddSKElement();
 			Destroy();
 		}
 	}
